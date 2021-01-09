@@ -30,9 +30,9 @@ const SearchImage = ({ searchHandler }) => {
                 value={orientation}
                 onChange={handleChange}
             >
+                <option value="all">Both</option>
                 <option value="horizontal">Landscape</option>
                 <option value="vertical">Potrait</option>
-                <option value="all">Both</option>
             </select>
             <button className="btn" type="submit">Search</button>
         </form>

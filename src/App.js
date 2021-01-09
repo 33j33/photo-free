@@ -4,22 +4,27 @@ import ImageCard from "./components/ImageCard";
 import SearchImage from "./components/SearchImage";
 import Loader from "react-loader-spinner";
 import { AiFillVideoCamera } from "react-icons/ai"
+import Pagination from "./components/Pagination";
 
 function App() {
+  const [pageNumber, setPageNumber] = useState(1)
   const [imagesData, setImageData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [queryObject, setQueryObject] = useState({ searchTerm: "", orientation: "" });
 
+  // Callback handler receives input from `text-input` and `select` elements
+  // constructs an object using the input and passes to state setter function
   const searchHandler = (textInput, orientation) => setQueryObject({ searchTerm: textInput, orientation: orientation });
 
+  const paginate = (pageNum) => setPageNumber(pageNum);
   // useEffect runs only when `queryObject`state changes 
-  // and it changes when user presses search
+  // and the state changes when user presses search
   useEffect(() => {
     const fetchData = async () => {
       const q = queryObject.searchTerm;
       const orientation = queryObject.orientation;
-      console.log(queryObject);
-      const url = `https://pixabay.com/api/?key=${process.env.REACT_APP_PIXABAY_API_KEY}&q=${q}&orientation=${orientation}`
+      console.log(queryObject, pageNumber);
+      const url = `https://pixabay.com/api/?key=${process.env.REACT_APP_PIXABAY_API_KEY}&q=${q}&orientation=${orientation}&page=${pageNumber}`
       try {
         const response = await fetch(url);
         const data = await response.json();
@@ -27,16 +32,17 @@ function App() {
         setIsLoading(false);
       }
       catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
     fetchData();
-  }, [queryObject]);
+  }, [queryObject, pageNumber]);
+
   return (
     <div className="App">
       <div className="header">
         <h1 className="title"><AiFillVideoCamera /> Pixels</h1>
-        <p>Search Creative Commons License Images</p>
+        <p>Search free to use images</p>
         <SearchImage searchHandler={searchHandler} />
       </div>
       {isLoading === false && imagesData.length === 0 && <h3>No Images Founds</h3>}
@@ -55,6 +61,7 @@ function App() {
           ))}
         </div>
       }
+      <Pagination paginate={paginate} />
     </div>
   );
 }
